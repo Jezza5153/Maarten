@@ -1,15 +1,2 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
-
-function createPrismaClient() {
-  const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' })
-  return new PrismaClient({ adapter } as any)
-}
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: ReturnType<typeof createPrismaClient> | undefined
-}
-
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Re-export mock data as 'prisma' so all pages work without a database
+export { mockDb as prisma } from './mock-data'
