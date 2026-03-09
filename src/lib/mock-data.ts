@@ -263,7 +263,7 @@ export const mockDb = {
             if (opts?.take) result = result.slice(0, opts.take)
             return result
         },
-        findUnique: (opts: { where: { slug?: string; id?: string } }) => {
+        findUnique: (opts: { where: { slug?: string; id?: string }; include?: any }) => {
             if (opts.where.slug) return allChefs.find(c => c.slug === opts.where.slug) || null
             if (opts.where.id) return allChefs.find(c => c.id === opts.where.id) || null
             return null
