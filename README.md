@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chef & Serve — Dutch B2B Hospitality Staffing Platform
 
-## Getting Started
+Professioneel keukenpersoneel voor hotels in Amsterdam.
 
-First, run the development server:
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd chef-and-serve
+npm install
+npx prisma db push      # Create database tables
+npx tsx prisma/seed.ts   # Seed 840 chefs, 10 hotels, 6 requests
+npm run dev              # Start dev server at http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Description |
+|---|---|
+| `/` | Landing page |
+| `/aanvraag` | 3-step hotel intake form |
+| `/aanvraag/bevestiging?id=...` | Shortlist confirmation |
+| `/voor-hotels` | SLA & guarantees |
+| `/werkwijze` | Screening & process |
+| `/login` | Chef magic link (mocked) |
+| `/chef/dashboard` | Chef profile + availability |
+| `/chefs` | Directory preview |
+| `/chef/[slug]` | Individual profile |
+| `/admin` | Planner dashboard |
+| `/admin/requests/[id]` | Request detail with matches |
+| `/admin/chefs` | Chef management table |
+| `/chef-huren-amsterdam` | SEO page |
+| `/tijdelijke-kok-amsterdam` | SEO page |
+| `/banqueting-chef` | SEO page |
+| `/pastry-chef-inhuren` | SEO page |
+| `/keukenpersoneel-hotel` | SEO page |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Match Engine (`src/lib/match-engine.ts`)
 
-## Learn More
+Deterministic scoring: availability, role (+30 exact), city/radius, languages, certs, reliability, rate, experience, recency. Returns top 10 with Dutch reasons + risks.
 
-To learn more about Next.js, take a look at the following resources:
+## Data (840 chefs, 10 hotels, 6 requests)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run `npx tsx prisma/seed.ts` to regenerate.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stack
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 15, TypeScript, Tailwind CSS, Prisma + SQLite, Lucide React icons.

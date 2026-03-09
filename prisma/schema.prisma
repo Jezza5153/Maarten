@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Chef {
+  id                     String   @id @default(cuid())
+  firstName              String
+  lastName               String
+  slug                   String   @unique
+  email                  String   @unique
+  phone                  String?
+  city                   String
+  radiusKm               Int      @default(15)
+  roles                  String   // JSON array
+  cuisines               String   // JSON array
+  experienceYears        Int      @default(0)
+  languages              String   // JSON array
+  certifications         String   // JSON array
+  rateHourlyMin          Float    @default(25)
+  rateHourlyMax          Float    @default(45)
+  lastActiveAt           DateTime @default(now())
+  status                 String   @default("inactive") // inactive | warm | active
+  profileCompletenessScore Int    @default(0)
+  reliabilityScore       Int      @default(50)
+  notesInternal          String?
+  photoUrl               String?
+  bio                    String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  availability           ChefAvailability[]
+  matchResults           MatchResult[]
+}
+
+model ChefAvailability {
+  id          String   @id @default(cuid())
+  chefId      String
+  date        String   // YYYY-MM-DD
+  startTime   String   // HH:mm
+  endTime     String   // HH:mm
+  isAvailable Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  chef        Chef     @relation(fields: [chefId], references: [id], onDelete: Cascade)
+}
+
+model HotelCompany {
+  id           String   @id @default(cuid())
+  name         String
+  kvkNumber    String
+  vatId        String?
+  address      String
+  city         String   @default("Amsterdam")
+  contactName  String
+  contactEmail String
+  contactPhone String?
+  billingEmail String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  shiftRequests ShiftRequest[]
+}
+
+model ShiftRequest {
+  id              String   @id @default(cuid())
+  hotelCompanyId  String
+  roleNeeded      String   // chef_de_partie | sous_chef | executive_chef | pastry_chef | bediening
+  date            String   // YYYY-MM-DD
+  startTime       String   // HH:mm
+  endTime         String   // HH:mm
+  locationCity    String   @default("Amsterdam")
+  languagesReq    String   @default("[]") // JSON array
+  certificationsReq String @default("[]") // JSON array
+  dressCode       String?
+  toolsRequired   String?
+  specialNotes    String?
+  budgetMin       Float?
+  budgetMax       Float?
+  urgency         String   @default("normal") // normal | urgent
+  status          String   @default("new") // new | matching | shortlist_sent | booked | cancelled
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  hotelCompany    HotelCompany  @relation(fields: [hotelCompanyId], references: [id], onDelete: Cascade)
+  matchResults    MatchResult[]
+}
+
+model MatchResult {
+  id              String   @id @default(cuid())
+  shiftRequestId  String
+  chefId          String
+  matchScore      Int      @default(0)
+  matchReasons    String   @default("[]") // JSON array
+  risks           String   @default("[]") // JSON array
+  summary         String?  // AI-generated summary in Dutch
+  suggestedQuestions String? // JSON array
+  status          String   @default("pending") // pending | shortlisted | rejected | accepted
+  createdAt       DateTime @default(now())
+
+  shiftRequest    ShiftRequest @relation(fields: [shiftRequestId], references: [id], onDelete: Cascade)
+  chef            Chef         @relation(fields: [chefId], references: [id], onDelete: Cascade)
+}
